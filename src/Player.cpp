@@ -10,13 +10,12 @@ Player::Player(float x, float y){
 Player::~Player(){}
 
 void Player::initShape(){
-    this->shape.setFillColor(sf::Color::Green);
-    this->shape.setSize(sf::Vector2f(50.f, 100.f));
+    this->shape.setFillColor(sf::Color::Blue);
+    this->shape.setSize(sf::Vector2f(50.f, 50.f));
 }
 
 void Player::initVariables(){
     this->speed = 10.f;
-    this->points = 0;
     this->HP = 10;
 }
 
@@ -73,4 +72,28 @@ void Player::updateWindowBoundsCollision(const sf::RenderTarget* target){
 
 const sf::RectangleShape& Player:: getShape() const {
     return shape;
+}
+
+const int Player::getHp() const {
+    return HP;
+}
+
+const int Player::getHpMAX() const {
+    return HP_MAX;
+}
+
+void Player::takeDamage(int damage) {
+    if (HP - damage >= 0){
+        HP -= damage;
+    }
+}
+
+void Player::gainHealth(int health) {
+    if (health + HP <= HP_MAX){
+        HP += health;
+    }
+}
+
+void Player::die() {
+    std::cout << "haha noob\n";
 }

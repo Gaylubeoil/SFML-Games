@@ -15,6 +15,13 @@ public:
     void render(sf::RenderTarget* target);
 
     const sf::RectangleShape& getShape() const;
+    const int getHp() const;
+    const int getHpMAX() const;
+
+    void takeDamage(int damage);
+    void gainHealth(int health);
+
+    void die();
 
 private:
     void updateInput();
@@ -29,9 +36,8 @@ private:
     sf::RectangleShape shape;
     float speed;
 
-    size_t HP;
+    int HP;
     const size_t HP_MAX = 10;
-    size_t points;
 
 
 };

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <ctime>
+#include <sstream>
 #include <vector>
 
 #include "Player.hpp"
@@ -15,6 +16,8 @@ public:
     void update();
     void render();
 
+    void renderGui(sf::RenderTarget* target);
+
     void pollEvents();
 
 //Accessors
@@ -24,10 +27,13 @@ private:
 //Functions
     void initWindow();
     void initVariables();
+    void initFont();
+    void initText();
     void spawnBalls();
 
 //Modifiers
     void updateCollision();
+    void updateGui();
 
 private:
     sf::RenderWindow* window;
@@ -37,6 +43,10 @@ private:
     bool gameOver;
 
     Player player;
+    size_t points;
+
+    sf::Text guiText;
+    sf::Font font;
 
     std::vector<SwagBall> balls;
     float spawnTimerMax;
