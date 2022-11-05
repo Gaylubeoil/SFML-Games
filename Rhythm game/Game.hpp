@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <algorithm>
+#include <array>
 
 enum class Difficulty {Undef = 0, Easy, Medium, Hard};
 
@@ -44,6 +46,9 @@ private:
     void initFonts();
     void initText();
     void initStartScreen();
+    
+    void handle_hsc(Difficulty x);
+    void handle_hsc_text();
 
 private:
     //Window
@@ -62,6 +67,12 @@ private:
     //GameLogic
     uint points;
     int health;
+
+    //High score logic
+    std::vector<size_t> easy_hsc;
+    std::vector<size_t> med_hsc;
+    std::vector<size_t> hard_hsc;
+    std::array<sf::Text, 3> hsc_text;
 
     float enemySpawnTimer;
     float enemySpawnTimerMax;

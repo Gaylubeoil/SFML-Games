@@ -11,13 +11,83 @@ Game::Game()
     this->initText();
 }
 
+void Game::handle_hsc(Difficulty x){
+    if (x == Difficulty::Easy){
+            for(size_t i = 0; i < 5; ++i){
+                if (points > easy_hsc[i]){
+                    easy_hsc.erase(easy_hsc.begin() + i);
+                    easy_hsc.push_back(points);
+                    break;
+                }
+            }
+            std::sort(easy_hsc.begin(), easy_hsc.end());
+        
+    }
+    else if (x == Difficulty::Medium){
+        
+            for(size_t i = 0; i < 5; ++i){
+                if (points > med_hsc[i]){
+                    med_hsc.erase(med_hsc.begin() + i);
+                    med_hsc.push_back(points);
+                    break;
+                }
+            }
+            std::sort(med_hsc.begin(), med_hsc.end());
+        
+    }
+    else if (x == Difficulty::Hard){
+        
+            for(size_t i = 0; i < 5; ++i){
+                if (points > hard_hsc[i]){
+                    hard_hsc.erase(hard_hsc.begin() + i);
+                    hard_hsc.push_back(points);
+                    break;
+                }
+            }
+            std::sort(hard_hsc.begin(), hard_hsc.end());
+        
+    }
+}
+
+void Game::handle_hsc_text(){
+    std::stringstream stream1, stream2, stream3;
+    stream1 << "Easy:\n\n";
+    for(int i = 4; i >= 0; --i){
+        stream1 << easy_hsc[i] << "\n\n";
+    }
+
+    hsc_text[0].setPosition(30, 350);
+    hsc_text[0].setString(stream1.str());
+
+    stream2 << "Medium:\n\n";
+    for(int i = 4; i >= 0; --i){
+        stream2 << med_hsc[i] << "\n\n";
+    }
+
+    hsc_text[1].setPosition(200, 350);
+    hsc_text[1].setString(stream2.str());
+
+    stream3 << "Hard:\n\n";
+    for(int i = 4; i >= 0; --i){
+        stream3 << hard_hsc[i] << "\n\n";
+    }
+
+    hsc_text[2].setPosition(360, 350);
+    hsc_text[2].setString(stream3.str());
+
+}
+
 void Game::restartGame(){
+    handle_hsc(difficulty);
+    handle_hsc_text();
+
     this->gameOver = false;
     this->uiText.setPosition(10, 10);
     this->points = 0;
     this->health = 10;
     this->enemies.clear();
     this->startScreen = true;
+    this->difficulty = Difficulty::Undef;
 }
 
 void Game::pollEvents()
@@ -34,9 +104,13 @@ void Game::pollEvents()
         case sf::Event::KeyPressed:
             if (this->ev.key.code == sf::Keyboard::Escape)
                 this->window->close();
-            else if (this->ev.key.code == sf::Keyboard::X)
+            if (this->ev.key.code == sf::Keyboard::X)
                 if (gameOver = true)
                     restartGame();
+            if (this->ev.key.code == sf::Keyboard::H){
+                this->health += 50;
+                this->points += 500;
+            }
             break;
 
         }
@@ -93,9 +167,12 @@ void Game::updateEnemies()
             {
                 if (enemies[i].getGlobalBounds().contains(mousePosView))
                 {
-                    enemies[i].setFillColor(sf::Color::Green);
-                    deleted = true;
-                    points += 1;
+                    if (!(enemies[i].getFillColor() == sf::Color::Green)){
+                        enemies[i].setFillColor(sf::Color::Green);
+                        deleted = true;
+                        points += 1;
+
+                    }
                 }
             }
         }
@@ -108,7 +185,7 @@ void Game::updateEnemies()
 
 void Game::updateText(){
     if(startScreen){
-        uiText.setPosition(200, 50);
+        uiText.setPosition(155, 50);
         this->uiText.setString("Choose Difficulty!");
     }
     else if (gameOver){
@@ -131,22 +208,23 @@ void Game::updateText(){
 }
 
 void Game::updateStartScreen(){
+    handle_hsc_text();
     this->updateText();
     enemies.clear();
     sf::RectangleShape easy;
     easy.setFillColor(sf::Color::Green);
-    easy.setPosition(150, 100);
+    easy.setPosition(115, 100);
     easy.setSize(sf::Vector2f(50.f, 50.f));
 
 
     sf::RectangleShape med;
     med.setFillColor(sf::Color::Yellow);
-    med.setPosition(250, 100);
+    med.setPosition(215, 100);
     med.setSize(sf::Vector2f(50.f, 50.f));
 
     sf::RectangleShape hard;
     hard.setFillColor(sf::Color::Red);
-    hard.setPosition(350, 100);
+    hard.setPosition(315, 100);
     hard.setSize(sf::Vector2f(50.f, 50.f));
 
     df.push_back(med);
@@ -193,6 +271,7 @@ void Game::update()
     if (startScreen){
         this->updateMousePos();
         this->updateStartScreen();
+        
     }
 
     if (!gameOver && !startScreen){
@@ -212,14 +291,6 @@ void Game::update()
 
 void Game::render()
 {
-    /*
-        @return void
-        - clear old frame;
-        - render objects;
-        - display frame in window;
-        Renders the game objects.
-    */
-
     this->window->clear();
     this->renderStartScreen(*this->window);
     this->renderEnemies(*this->window);
@@ -236,6 +307,13 @@ void Game::renderEnemies(sf::RenderTarget& target)
 
 void Game::renderText(sf::RenderTarget& target){
     target.draw(this->uiText);
+    
+    if (startScreen){
+        for(int i = 0; i < 3; ++i){
+         target.draw(this->hsc_text[i]);
+        }
+
+    }
 }
 
 void Game::renderStartScreen(sf::RenderTarget& target){
@@ -260,7 +338,7 @@ void Game::spawnEnemy()
         0.f);
 
     enemy.setFillColor(sf::Color(150, 20, 226, 255));
-    //enemy.setRotation(rand() % 45);
+    // enemy.setRotation(rand() % 45);
 
     enemies.push_back(enemy);
 }
@@ -277,6 +355,13 @@ const bool Game::getGameOverConst() const {
 // Private
 void Game::initVariables()
 {
+
+    for(size_t i = 0; i < 5; ++i){
+        easy_hsc.push_back(0);
+        med_hsc.push_back(0);
+        hard_hsc.push_back(0);
+    }
+
     window = nullptr;
 
     health = 10;
@@ -299,8 +384,8 @@ void Game::initEnemies()
 }
 
 void Game::initWindow(){
-    this->vm.width = 640;
-    this->vm.height = 480;
+    this->vm.width = 480;
+    this->vm.height = 640;
     this->window = new sf::RenderWindow(vm, "Poggers", sf::Style::Titlebar | sf::Style::Close);
     this->window->setFramerateLimit(60);
 }
@@ -318,6 +403,16 @@ void Game::initText(){
     uiText.setStyle(sf::Text::Italic);
     uiText.setString("Uninitialized string");
     uiText.setPosition(10, 10);
+
+    for(int i = 0; i < 3; ++i){
+        hsc_text[i].setFont(font);
+        hsc_text[i].setCharacterSize(14);
+        hsc_text[i].setFillColor(sf::Color::White);
+        hsc_text[i].setStyle(sf::Text::Italic);
+        hsc_text[i].setString("uninit");
+        hsc_text[i].setPosition(10, 300);
+
+    }
 }
 
 void Game::initStartScreen(){
