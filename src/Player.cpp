@@ -8,9 +8,11 @@ Player::Player(){
 
 void Player::initVariables(){
     movmentSpeed = 10.f;
-    attackCooldownMax = 30.f;
+    attackCooldownMax = 20.f;
     attackCooldown = attackCooldownMax;
-
+    health = 10;
+    invincibleCooldownMax = 5.f;
+    invincibleCooldown = invincibleCooldownMax;
 }
 
 void Player::initSprite(){
@@ -39,16 +41,30 @@ bool Player::canAttack(){
     return false;
 }
 
-void Player::update(){
-    updateAttack();
+bool Player::canTakeDamage(){
+    if (invincibleCooldown >= invincibleCooldownMax){
+        invincibleCooldown = 0.f;
+        return true;
+    }
+    return false;
 }
 
- void Player::updateAttack(){
+void Player::update(){
+    updateAttack();
+    updateInvincibility();
+}
+
+void Player::updateAttack(){
     if (attackCooldown < attackCooldownMax){
         attackCooldown += 0.5f;
     }
-    
- }
+}
+
+void Player::updateInvincibility(){
+    if (invincibleCooldown < invincibleCooldownMax){
+        invincibleCooldown += 0.5f;
+    }
+}
 
 sf::Sprite Player::getSprite() const{
     return this->sprite;
@@ -68,6 +84,14 @@ const sf::Vector2f& Player::getPos() const{
 
 sf::FloatRect Player::getBounds() const {
     return sprite.getGlobalBounds();
+}
+
+size_t Player::getHealth()const {
+    return this->health;
+}
+
+void Player::setHealth(size_t _health){
+    this->health = _health;
 }
 
 Player::~Player(){

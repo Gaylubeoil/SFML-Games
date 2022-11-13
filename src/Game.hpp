@@ -23,6 +23,7 @@ private:
     void initPlayer();
     void initEnemies();
     void initTextures();
+    void initFonts();
 
     //Player stuff
     void updatePlayerMovment();
@@ -33,6 +34,7 @@ private:
 
     //Enemies
     void updateEnemies();
+    void updateCombat();
 
     //Bullets
     void updateBullets();
@@ -57,4 +59,7 @@ private:
     //Resources
     std::map<std::string, sf::Texture*> textures;
     std::vector<Bullet*> bullets;
+    sf::Texture _background;
+    sf::Sprite background;
+    sf::Font font;
 };

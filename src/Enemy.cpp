@@ -7,15 +7,13 @@ Enemy::Enemy(float _posx, float _posy){
 }
 
 void Enemy::initShape(){
-    shape.setRadius(rand() % 20 + 2);
-    shape.setPointCount(rand() % 100 + 10);
+    shape.setRadius(rand() % 100 + 20);
     shape.setFillColor(sf::Color(
-        (rand() % 254 + 1), 
-        (rand() % 254 + 1), 
-        (rand() % 254 + 1),
+        (rand() % 150 + 50), 
+        (rand() % 150 + 50), 
+        (rand() % 150 + 50),
         255)
     );
-
 }
 
 void Enemy::initVariables(){

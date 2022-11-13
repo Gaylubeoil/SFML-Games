@@ -6,6 +6,7 @@ Game::Game() {
     this->initVariables();
     this->initEnemies();
     this->initTextures();
+    this->initFonts();
 }
 
 void Game::initWindow() {
@@ -18,6 +19,9 @@ void Game::initWindow() {
 
 void Game::initVariables() {
     gameOver = false;
+    _background.loadFromFile("../assets/backgr.png");
+    background.setTexture(_background);
+    background.setPosition(0, 0);
 }
 
 void Game::initPlayer() {
@@ -25,7 +29,7 @@ void Game::initPlayer() {
 }
 
 void Game::initEnemies() {
-    spawnTimerMax = 50.f;
+    spawnTimerMax = 45.f;
     spawnTimer = spawnTimerMax;
 }
 
@@ -33,6 +37,13 @@ void Game::initTextures(){
     //textures.insert();
     textures["BULLET"] = new sf::Texture();
     textures["BULLET"]->loadFromFile("../assets/bullet.png");
+}
+
+void Game::initFonts() {
+    if (!font.loadFromFile("../fonts/pixelfont.TTF")){
+        std::cout << "pixelfont.TTF failed to load. Game.cpp, 44.\n";
+    }
+
 }
 
 void Game::run() {
@@ -49,8 +60,12 @@ void Game::update() {
     this->updateInput();
     this->p->update();
     this->updateEnemies();
+    this->updateCombat();
     this->updateBullets();
     this->updatePlayerCollision();
+    std::cout << "Enemies size: " << enemies.size() << '\n';
+    std::cout << "Bullets size: " << bullets.size() << "\n\n";
+    std::cout << "Health: " << p->getHealth() << '\n';
 }
 
 void Game::updatePlayerMovment(){
@@ -89,8 +104,8 @@ void Game::updateInput() {
         0.0f,
         -1.f,
         4.f,
-        p->getPos().x + p->getBounds().width / 2.f,
-        p->getPos().y)
+        p->getPos().x + p->getBounds().width / 2.f - 2,
+        p->getPos().y + 30)
         );
     }
 }
@@ -115,7 +130,7 @@ void Game::updateBullets() {
         bullet->update();
 
         //Bullet culling (top of screen)
-        if(bullet->getBounds().top + bullet->getBounds().height < 0.f){
+        if(bullet->getBounds().top + bullet->getBounds().height < -200.f){
             delete bullets.at(counter);
             bullets.erase(bullets.begin() + counter);
             --counter;
@@ -138,10 +153,34 @@ void Game::updateEnemies(){
         }
     }
 }
+void Game::updateCombat() {
+    for(size_t i = 0; i < enemies.size(); ++i){
+        for (size_t j = 0; j < bullets.size(); ++j){
+            if (bullets[j]->getBounds().intersects(enemies[i]->getBounds())){
+                delete bullets.at(j);
+                delete enemies.at(i);
+                bullets.erase(bullets.begin() + j);
+                enemies.erase(enemies.begin() + i);
+            }
+            
+        }
+    }
+    for(size_t i = 0; i < enemies.size(); ++i){
+        if (p->getBounds().intersects(enemies[i]->getBounds())){
+            delete enemies.at(i);
+            enemies.erase(enemies.begin() + i);
+            if (p->getHealth() > 1 && p->canTakeDamage()){
+                p->setHealth(p->getHealth() - 1);
+            }
+        }
+    }
+}
 
 void Game::render() {
     window->clear();
     // clear old frame
+    this->window->draw(background);
+    
 
     this->p->render(*this->window);
 
