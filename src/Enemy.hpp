@@ -11,6 +11,7 @@ public:
     void update();
 
     sf::FloatRect getBounds() const;
+    size_t getPoints() const;
 private:
     void initVariables();
     void initShape();
@@ -23,6 +24,8 @@ private:
     size_t damage;
     size_t points;
     size_t type;
+    size_t pointCount;
+    float speed;
 
 
 };

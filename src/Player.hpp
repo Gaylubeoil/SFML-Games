@@ -20,6 +20,9 @@ public:
     const sf::Vector2f& getPos() const;
     sf::FloatRect getBounds() const;
     size_t getHealth() const;
+
+    void setPos(const sf::Vector2f _pos);
+    void setPos(float x, float y);
     void setHealth(size_t _health);
 private:
     void initSprite();

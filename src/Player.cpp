@@ -7,12 +7,12 @@ Player::Player(){
 }
 
 void Player::initVariables(){
-    movmentSpeed = 10.f;
-    attackCooldownMax = 20.f;
-    attackCooldown = attackCooldownMax;
-    health = 10;
-    invincibleCooldownMax = 5.f;
-    invincibleCooldown = invincibleCooldownMax;
+    movmentSpeed            = 10.f;
+    attackCooldownMax       = 2.f;
+    attackCooldown          = attackCooldownMax;
+    health                  = 10;
+    invincibleCooldownMax   = 5.f;
+    invincibleCooldown      = invincibleCooldownMax;
 }
 
 void Player::initSprite(){
@@ -27,10 +27,8 @@ void Player::initSprite(){
 
 void Player::initTexture(){
     //Load from file
-    if(!texture.loadFromFile("../assets/ship.png")){
+    if(!texture.loadFromFile("../assets/ship.png"))
         std::cout << "FAILED TO LOAD ASSET \"ship.png\", Player.cpp, 16\n";
-    }
-    
 }
 
 bool Player::canAttack(){
@@ -92,6 +90,14 @@ size_t Player::getHealth()const {
 
 void Player::setHealth(size_t _health){
     this->health = _health;
+}
+
+void Player::setPos(const sf::Vector2f _pos){
+    sprite.setPosition(_pos);
+}
+
+void Player::setPos(float x, float y){
+    sprite.setPosition(x, y);
 }
 
 Player::~Player(){

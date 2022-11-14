@@ -7,6 +7,7 @@ Game::Game() {
     this->initEnemies();
     this->initTextures();
     this->initFonts();
+    this->initGUI();
 }
 
 void Game::initWindow() {
@@ -18,7 +19,8 @@ void Game::initWindow() {
 }
 
 void Game::initVariables() {
-    gameOver = false;
+    gameOver    = false;
+    points      = 0;
     _background.loadFromFile("../assets/backgr.png");
     background.setTexture(_background);
     background.setPosition(0, 0);
@@ -43,7 +45,13 @@ void Game::initFonts() {
     if (!font.loadFromFile("../fonts/pixelfont.TTF")){
         std::cout << "pixelfont.TTF failed to load. Game.cpp, 44.\n";
     }
+}
 
+void Game::initGUI(){
+    pointText.setCharacterSize(14);
+    pointText.setFont(this->font);
+    pointText.setFillColor(sf::Color::White);
+    pointText.setPosition(5.f, 5.f);
 }
 
 void Game::run() {
@@ -59,10 +67,11 @@ void Game::update() {
     this->updatePlayerMovment();
     this->updateInput();
     this->p->update();
+    this->updatePlayerCollision();
     this->updateEnemies();
     this->updateCombat();
     this->updateBullets();
-    this->updatePlayerCollision();
+    this->updateGUI();
     std::cout << "Enemies size: " << enemies.size() << '\n';
     std::cout << "Bullets size: " << bullets.size() << "\n\n";
     std::cout << "Health: " << p->getHealth() << '\n';
@@ -83,18 +92,18 @@ void Game::updatePlayerMovment(){
     }
 }
 void Game::updatePlayerCollision(){
-    if (p->getSprite().getGlobalBounds().height < 0){
-        p->getSprite().setPosition(
-            p->getSprite().getPosition().x,
-            0
-        );
+    if (p->getBounds().left < 0.f){
+        p->setPos(0.f, p->getBounds().top);
     }
-    
-    if (p->getSprite().getGlobalBounds().width < 0){
-        p->getSprite().setPosition(
-            0,
-            p->getSprite().getPosition().y
-        );
+    else if (p->getBounds().left + p->getBounds().width >= vm.width){
+        p->setPos(vm.width - p->getBounds().width, p->getBounds().top);
+    }
+
+    if (p->getBounds().top < 0.f){
+        p->setPos(p->getBounds().left, 0.f);
+    }
+    else if (p->getBounds().top + p->getBounds().height >= vm.height){
+        p->setPos(p->getBounds().left, vm.height - p->getBounds().height);
     }
 }
 void Game::updateInput() {
@@ -155,12 +164,17 @@ void Game::updateEnemies(){
 }
 void Game::updateCombat() {
     for(size_t i = 0; i < enemies.size(); ++i){
-        for (size_t j = 0; j < bullets.size(); ++j){
+        bool deletedEnemy = false;
+        for (size_t j = 0; j < bullets.size() && deletedEnemy == false; ++j){
             if (bullets[j]->getBounds().intersects(enemies[i]->getBounds())){
+                points += enemies.at(i)->getPoints();
+                
                 delete bullets.at(j);
                 delete enemies.at(i);
                 bullets.erase(bullets.begin() + j);
                 enemies.erase(enemies.begin() + i);
+                deletedEnemy = true;
+                
             }
             
         }
@@ -174,6 +188,12 @@ void Game::updateCombat() {
             }
         }
     }
+}
+
+void Game::updateGUI(){
+    std::stringstream ss;
+    ss << "Points: " << points;
+    pointText.setString(ss.str());
 }
 
 void Game::render() {
@@ -192,6 +212,7 @@ void Game::render() {
         enemy->render(this->window);
     }
 
+    window->draw(pointText);
     // display new frame
     window->display();
 }

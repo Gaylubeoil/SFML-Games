@@ -4,6 +4,8 @@
 #include "Bullet.hpp"
 #include "Enemy.hpp"
 #include <map>
+#include <sstream>
+#include <string>
 
 class Game{
 public:
@@ -24,6 +26,7 @@ private:
     void initEnemies();
     void initTextures();
     void initFonts();
+    void initGUI();
 
     //Player stuff
     void updatePlayerMovment();
@@ -39,6 +42,9 @@ private:
     //Bullets
     void updateBullets();
 
+    void updateWorld();
+    void updateGUI();
+
 private:
     //Window
     sf::RenderWindow* window;
@@ -50,6 +56,7 @@ private:
 
     //Player
     Player* p;
+    size_t points;
 
     //Enemies
     std::vector<Enemy*> enemies;
@@ -62,4 +69,5 @@ private:
     sf::Texture _background;
     sf::Sprite background;
     sf::Font font;
+    sf::Text pointText;
 };
