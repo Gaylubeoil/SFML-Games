@@ -13,7 +13,7 @@ Game::Game() {
 void Game::initWindow() {
     vm.width = 800;
     vm.height = 600;
-    window = new sf::RenderWindow(vm, "Lords 'o space", sf::Style::Close | sf::Style::Titlebar);
+    window = new sf::RenderWindow(vm, "men r gayB)", sf::Style::Close | sf::Style::Titlebar);
     window->setFramerateLimit(60);
     window->setVerticalSyncEnabled(false);
 }
@@ -28,6 +28,7 @@ void Game::initVariables() {
 
 void Game::initPlayer() {
     this->p = new Player;
+    p->setPos(400.f, 400.f);
 }
 
 void Game::initEnemies() {
@@ -51,19 +52,38 @@ void Game::initGUI(){
     pointText.setCharacterSize(14);
     pointText.setFont(this->font);
     pointText.setFillColor(sf::Color::White);
-    pointText.setPosition(5.f, 5.f);
-}
+    pointText.setPosition(10.f, 560.f);
 
+    playerHpBar.setSize(sf::Vector2f(300.f, 25.f));
+    playerHpBar.setPosition(sf::Vector2f(10.f, 10.f));
+    playerHpBar.setFillColor(sf::Color::Green);
+    
+    playerHpBarBack.setSize(sf::Vector2f(300.f, 25.f));
+    playerHpBarBack.setPosition(sf::Vector2f(10.f, 10.f));
+    playerHpBarBack.setFillColor(sf::Color::Red);
+
+    gameOverText.setCharacterSize(40);
+    gameOverText.setFont(this->font);
+    gameOverText.setFillColor(sf::Color::White);
+    gameOverText.setString("Game Over!");
+    gameOverText.setPosition(
+        window->getSize().x / 2.f - gameOverText.getGlobalBounds().width / 2.f,
+        window->getSize().y / 2.f - gameOverText.getGlobalBounds().height / 2.f
+    );   
+}
 void Game::run() {
-    while (!gameOver)
+    while (window->isOpen())
     {
-        update();
+        updatePollEvents();
+        if(p->getHealth() > 0){
+            update();
+        }
         render();
+        
     }
 }
 
 void Game::update() {
-    this->updatePollEvents();
     this->updatePlayerMovment();
     this->updateInput();
     this->p->update();
@@ -129,7 +149,11 @@ void Game::updatePollEvents(){
                 gameOver = true;
                 window->close();
             }
+            if (ev.key.code == sf::Keyboard::R && p->getHealth() <= 0){
+                restartGame();
+            }
         }
+        
     }
 }
 void Game::updateBullets() {
@@ -139,7 +163,7 @@ void Game::updateBullets() {
         bullet->update();
 
         //Bullet culling (top of screen)
-        if(bullet->getBounds().top + bullet->getBounds().height < -200.f){
+        if(bullet->getBounds().top + bullet->getBounds().height < -20.f){
             delete bullets.at(counter);
             bullets.erase(bullets.begin() + counter);
             --counter;
@@ -183,8 +207,11 @@ void Game::updateCombat() {
         if (p->getBounds().intersects(enemies[i]->getBounds())){
             delete enemies.at(i);
             enemies.erase(enemies.begin() + i);
-            if (p->getHealth() > 1 && p->canTakeDamage()){
+            if (p->canTakeDamage()){
                 p->setHealth(p->getHealth() - 1);
+            }
+            if (p->getHealth() <= 0){
+                //gameOver = true;
             }
         }
     }
@@ -194,6 +221,12 @@ void Game::updateGUI(){
     std::stringstream ss;
     ss << "Points: " << points;
     pointText.setString(ss.str());
+
+    float hpPercent = static_cast<float>(p->getHealth()) / static_cast<float>(p->getMaxHealth());
+    playerHpBar.setSize(sf::Vector2f(
+        hpPercent * 300.f,
+        playerHpBar.getSize().y
+    ));
 }
 
 void Game::render() {
@@ -212,11 +245,34 @@ void Game::render() {
         enemy->render(this->window);
     }
 
-    window->draw(pointText);
+    this->renderGUI();
+
+    if(p->getHealth() <= 0){
+        window->draw(gameOverText);
+    }
     // display new frame
     window->display();
 }
 
+void Game::renderGUI(){
+    window->draw(pointText);
+    window->draw(playerHpBarBack);
+    window->draw(playerHpBar);
+}
+
+void Game::restartGame(){
+    for(auto* _bullet : bullets)
+        delete _bullet;
+
+    for(auto* _enemy: enemies)
+        delete _enemy;
+
+    enemies.clear();
+    bullets.clear();
+    p->setHealth(p->getMaxHealth());
+    points = 0;
+    p->setPos(400.f, 400.f);
+}
 
 Game::~Game() {
     delete window;

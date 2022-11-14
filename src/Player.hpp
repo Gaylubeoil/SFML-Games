@@ -20,10 +20,13 @@ public:
     const sf::Vector2f& getPos() const;
     sf::FloatRect getBounds() const;
     size_t getHealth() const;
+    size_t getMaxHealth() const;
 
     void setPos(const sf::Vector2f _pos);
     void setPos(float x, float y);
     void setHealth(size_t _health);
+    void lostHealth(const int _health);
+
 private:
     void initSprite();
     void initTexture();
@@ -38,6 +41,7 @@ private:
 
     float movmentSpeed;
     size_t health;
+    size_t healthMax;
     float invincibleCooldown;
     float invincibleCooldownMax;
 

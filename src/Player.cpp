@@ -10,7 +10,8 @@ void Player::initVariables(){
     movmentSpeed            = 10.f;
     attackCooldownMax       = 2.f;
     attackCooldown          = attackCooldownMax;
-    health                  = 10;
+    healthMax               = 10;
+    health                  = healthMax;
     invincibleCooldownMax   = 5.f;
     invincibleCooldown      = invincibleCooldownMax;
 }
@@ -88,8 +89,16 @@ size_t Player::getHealth()const {
     return this->health;
 }
 
+size_t Player::getMaxHealth() const{
+    return this->healthMax;
+}
+
 void Player::setHealth(size_t _health){
     this->health = _health;
+}
+
+void Player::lostHealth(const int _health){
+    health -= _health;
 }
 
 void Player::setPos(const sf::Vector2f _pos){

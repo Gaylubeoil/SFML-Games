@@ -45,6 +45,9 @@ private:
     void updateWorld();
     void updateGUI();
 
+    void renderGUI();
+
+    void restartGame();
 private:
     //Window
     sf::RenderWindow* window;
@@ -58,6 +61,10 @@ private:
     Player* p;
     size_t points;
 
+    //PlayerGUI
+    sf::RectangleShape playerHpBar;
+    sf::RectangleShape playerHpBarBack;
+
     //Enemies
     std::vector<Enemy*> enemies;
     float spawnTimer;
@@ -70,4 +77,6 @@ private:
     sf::Sprite background;
     sf::Font font;
     sf::Text pointText;
+    sf::Text gameOverText;
+
 };
