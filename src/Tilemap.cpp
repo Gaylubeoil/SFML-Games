@@ -26,17 +26,29 @@ void Tilemap::updateCollision(Player *target)
         {
             if (target->getPosition().y < tile.getPosition().y)
             {
+                // Top to bottom collision
                 target->setOnPlatform(true);
                 target->setPosition(target->getPosition().x, tile.getGlobalBounds().top - target->getGlobalBounds().height + 5);
+                break;
+            }
+            else if (target->getPosition().y > tile.getPosition().y)
+            {
+                // Bottom to top collision
+                target->setPosition(
+                    target->getPosition().x,
+                    tile.getGlobalBounds().height + tile.getGlobalBounds().top);
+                target->resetVelocityY();
                 break;
             }
         }
         else if (target->getPosition().y + target->getGlobalBounds().height >= 608)
         {
+            // Marks the window floor as a platform
             target->setOnPlatform(true);
         }
         else
         {
+            // If the target isn't colliding with anything, then he's not on a platform
             target->setOnPlatform(false);
         }
     }
@@ -77,25 +89,25 @@ void Tilemap::init(sf::RenderTarget *target)
 {
 
     map_sketch = {
-        "                         ",
-        "                         ",
-        "                         ",
-        "                         ",
-        "              LMMR       ",
-        "                         ",
-        "                     LMMR",
-        "                         ",
-        "                LMMMMR   ",
-        "  LMMMMMR                ",
-        "                         ",
-        "                         ",
-        "                         ",
-        "            LMMR         ",
-        "                         ",
-        "                         ",
-        "                         ",
-        "                         ",
-        "GGGGGGGGGGGGGGGGGGGGGGGGG",
+        "                                                  ",
+        "                                      LMMMMR      ",
+        "                                                  ",
+        "                                                  ",
+        "           LMMMMMR                                ",
+        "                                    LMMMMR        ",
+        "                     LMMR                         ",
+        "                                                  ",
+        "                LMMMMR                            ",
+        "  LMMMMMR                                         ",
+        "                                                  ",
+        "                            LMMR                  ",
+        "                                                  ",
+        "               LMMMR                              ",
+        "                                          LMMMMR  ",
+        "                                                  ",
+        "                               LMMMMR             ",
+        "                                                  ",
+        "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
     };
 
     for (size_t y = 0; y < tiles_vertically; ++y)

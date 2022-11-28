@@ -3,7 +3,7 @@
 #include "Player.hpp"
 
 const size_t tiles_vertically = 19;
-const size_t tiles_horizontally = 25;
+const size_t tiles_horizontally = 50;
 
 enum class TType
 {

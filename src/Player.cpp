@@ -133,18 +133,22 @@ void Player::updateAnimation()
     }
     else if (animState == FALLING)
     {
-        currentFrame.top = 150.f;
-        currentFrame.left = 0.f;
-        sprite.setTextureRect(currentFrame);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        currentFrame.top = 200.f;
+        currentFrame.left += 40.f;
+        if (currentFrame.left >= 80.f)
         {
-            sprite.setOrigin(sprite.getGlobalBounds().width / 1.5f, 0.f);
-            sprite.setScale(-1.5f, 1.5f);
-        }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        {
-            sprite.setOrigin(0.f, 0.f);
-            sprite.setScale(1.5f, 1.5f);
+            currentFrame.left = 0.f;
+            sprite.setTextureRect(currentFrame);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            {
+                sprite.setOrigin(sprite.getGlobalBounds().width / 1.5f, 0.f);
+                sprite.setScale(-1.5f, 1.5f);
+            }
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            {
+                sprite.setOrigin(0.f, 0.f);
+                sprite.setScale(1.5f, 1.5f);
+            }
         }
     }
 }

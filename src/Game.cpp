@@ -6,6 +6,7 @@ Game::Game()
     this->initWindow();
     this->initPlayer();
     this->initTilemap();
+    this->initView();
 }
 
 // Run loop
@@ -42,15 +43,21 @@ void Game::initTilemap()
     tilemap.init(window->get());
 }
 
+void Game::initView()
+{
+    view.reset(sf::FloatRect(100, 100, 800, 608));
+}
+
 // Update
 void Game::update()
 {
     this->updatePollEvents();
     this->updatePlayer();
     this->updateCollision();
-    tilemap.updateCollision(player);
+    this->tilemap.updateCollision(player);
     this->updateMousePos();
     this->updateLine();
+    this->updateView();
 }
 
 void Game::updateLine()
@@ -63,6 +70,15 @@ void Game::updateLine()
 
     line->append(p1);
     line->append(p2);
+}
+
+void Game::updateView()
+{
+
+    view.setCenter(
+        player->getPosition().x,
+        player->getPosition().y - 160.f);
+    window->get()->setView(view);
 }
 
 void Game::updatePollEvents()
@@ -96,18 +112,18 @@ void Game::updateMousePos()
 
 void Game::updateCollision()
 {
-    if (player->getPosition().x > window->getWidth())
-    {
-        player->setPosition(
-            -player->getGlobalBounds().width,
-            player->getPosition().y);
-    }
-    else if (player->getPosition().x + player->getGlobalBounds().width < 0)
-    {
-        player->setPosition(
-            window->getWidth(),
-            player->getPosition().y);
-    }
+    // if (player->getPosition().x > window->getWidth())
+    // {
+    //     player->setPosition(
+    //         -player->getGlobalBounds().width,
+    //         player->getPosition().y);
+    // }
+    // else if (player->getPosition().x + player->getGlobalBounds().width < 0)
+    // {
+    //     player->setPosition(
+    //         window->getWidth(),
+    //         player->getPosition().y);
+    // }
 }
 
 // Render

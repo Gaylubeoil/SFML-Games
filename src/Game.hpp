@@ -17,6 +17,7 @@ private:
     void initWindow();
     void initPlayer();
     void initTilemap();
+    void initView();
 
     // Update
     void update();
@@ -25,6 +26,7 @@ private:
     void updateCollision();
     void updateMousePos();
     void updateLine();
+    void updateView();
 
     // Render
     void render();
@@ -46,6 +48,9 @@ private:
     sf::VertexArray *line;
     sf::Vertex p1;
     sf::Vertex p2;
+
+    // Game View
+    sf::View view;
 
     // Tilemap
     Tilemap tilemap;
