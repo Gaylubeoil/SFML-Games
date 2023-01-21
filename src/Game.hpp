@@ -28,6 +28,12 @@ private:
     void updateLine();
     void updateView();
 
+    /*
+        Updates the Delta time variable with the time it
+        takes to update and render one frame.
+    */
+    void updateDeltaTime();
+
     // Render
     void render();
     void renderPlayer();
@@ -36,6 +42,10 @@ private:
     // Window
     Window *window;
     sf::Event event;
+
+    // Fps
+    float deltaTime;
+    sf::Clock dtClock;
 
     // Player
     Player *player;

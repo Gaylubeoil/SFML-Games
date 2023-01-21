@@ -12,6 +12,8 @@ enum class TType
     lPlatform,
     mPlatform,
     rPlatform,
+    dirt,
+    bricks,
 };
 
 class Tilemap
@@ -21,12 +23,14 @@ public:
     ~Tilemap();
 
     void render(sf::RenderTarget *target);
-
     void init(sf::RenderTarget *target);
     void updateCollision(Player *target);
 
 private:
     void fillTilesVector();
+
+    void updateVerticalCollision(const std::vector<Tile> &activeTiles, Player *target);
+    void updateHorizontalCollision(const std::vector<Tile> &activeTiles, Player *target);
 
 private:
     sf::Texture tileset;

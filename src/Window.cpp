@@ -4,6 +4,7 @@ Window::Window(const size_t _width, const size_t _height, const std::string Titl
 {
     this->vm.width = _width;
     this->vm.height = _height;
+    this->vm.bitsPerPixel = 64;
     this->instance = new sf::RenderWindow(this->vm, Title, sf::Style::Close | sf::Style::Titlebar);
     instance->setFramerateLimit(60);
     instance->setVerticalSyncEnabled(false);

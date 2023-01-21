@@ -25,12 +25,14 @@ public:
     // Getters
     const sf::FloatRect getGlobalBounds() const;
     const sf::Vector2f getPosition() const;
+    const sf::Vector2f getVelocity() const;
 
     // Setters
     void setPosition(const float _x, const float _y);
     void setPosition(const sf::Vector2f _pos);
     void setVelocity(const sf::Vector2f _vel);
     void resetVelocityY();
+    void resetVelocityX();
     void setFalling(bool _val);
     void setOnPlatform(bool _val);
 

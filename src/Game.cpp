@@ -16,6 +16,7 @@ void Game::run()
     {
         update();
         render();
+        updateDeltaTime();
     }
 }
 
@@ -112,6 +113,8 @@ void Game::updateMousePos()
 
 void Game::updateCollision()
 {
+    // Map Border Collisions
+
     // if (player->getPosition().x > window->getWidth())
     // {
     //     player->setPosition(
@@ -124,6 +127,11 @@ void Game::updateCollision()
     //         window->getWidth(),
     //         player->getPosition().y);
     // }
+}
+
+void Game::updateDeltaTime()
+{
+    deltaTime = this->dtClock.restart().asSeconds();
 }
 
 // Render

@@ -10,30 +10,34 @@ Tilemap::Tilemap()
     Tile lPlat(tileset, sf::IntRect(16, 0, 16, 16));
     Tile mPlat(tileset, sf::IntRect(32, 0, 16, 16));
     Tile rPlat(tileset, sf::IntRect(48, 0, 16, 16));
+    Tile dirt(tileset, sf::IntRect(0, 16, 16, 16));
+    Tile bricks(tileset, sf::IntRect(16, 16, 16, 16));
 
     tiles.push_back(ground);
     tiles.push_back(lPlat);
     tiles.push_back(mPlat);
     tiles.push_back(rPlat);
+    tiles.push_back(dirt);
+    tiles.push_back(bricks);
 }
 
-void Tilemap::updateCollision(Player *target)
+void Tilemap::updateVerticalCollision(const std::vector<Tile> &activeTiles, Player *target)
 {
-
     for (auto &tile : activeTiles)
     {
         if (target->getGlobalBounds().intersects(tile.getGlobalBounds()))
         {
-            if (target->getPosition().y < tile.getPosition().y)
+            if (target->getVelocity().y > 0)
             {
-                // Top to bottom collision
+                // Top collision
                 target->setOnPlatform(true);
-                target->setPosition(target->getPosition().x, tile.getGlobalBounds().top - target->getGlobalBounds().height + 5);
+                target->setPosition(target->getPosition().x, tile.getGlobalBounds().top - target->getGlobalBounds().height);
+                target->resetVelocityY();
                 break;
             }
-            else if (target->getPosition().y > tile.getPosition().y)
+            else if (target->getVelocity().y < 0)
             {
-                // Bottom to top collision
+                // Bottom collision
                 target->setPosition(
                     target->getPosition().x,
                     tile.getGlobalBounds().height + tile.getGlobalBounds().top);
@@ -52,6 +56,34 @@ void Tilemap::updateCollision(Player *target)
             target->setOnPlatform(false);
         }
     }
+}
+
+void Tilemap::updateHorizontalCollision(const std::vector<Tile> &activeTiles, Player *target)
+{
+    for (auto &tile : activeTiles)
+    {
+        if (target->getGlobalBounds().intersects(tile.getGlobalBounds()))
+        {
+            if (target->getVelocity().x > 0)
+            {
+                target->setPosition(tile.getPosition().x, target->getPosition().y);
+                target->resetVelocityX();
+                break;
+            }
+            else if (target->getVelocity().x < 0)
+            {
+                target->setPosition(tile.getPosition().x + tile.getGlobalBounds().width, target->getPosition().y);
+                target->resetVelocityX();
+                break;
+            }
+        }
+    }
+}
+
+void Tilemap::updateCollision(Player *target)
+{
+    updateVerticalCollision(activeTiles, target);
+    updateHorizontalCollision(activeTiles, target);
 }
 
 void Tilemap::render(sf::RenderTarget *target)
@@ -81,6 +113,16 @@ void Tilemap::render(sf::RenderTarget *target)
                 tiles[(int)TType::rPlatform].setPos(cell_size * x, cell_size * y);
                 tiles[(int)TType::rPlatform].render(target);
             }
+            else if (output_map[y][x] == TType::dirt)
+            {
+                tiles[(int)TType::dirt].setPos(cell_size * x, cell_size * y);
+                tiles[(int)TType::dirt].render(target);
+            }
+            else if (output_map[y][x] == TType::bricks)
+            {
+                tiles[(int)TType::bricks].setPos(cell_size * x, cell_size * y);
+                tiles[(int)TType::bricks].render(target);
+            }
         }
     }
 }
@@ -101,13 +143,13 @@ void Tilemap::init(sf::RenderTarget *target)
         "  LMMMMMR                                         ",
         "                                                  ",
         "                            LMMR                  ",
-        "                                                  ",
-        "               LMMMR                              ",
-        "                                          LMMMMR  ",
-        "                                                  ",
-        "                               LMMMMR             ",
-        "                                                  ",
+        "               LMMMR                        BBB   ",
+        "                                            BBB   ",
+        "                                            BBB   ",
+        "                                            BBB   ",
         "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     };
 
     for (size_t y = 0; y < tiles_vertically; ++y)
@@ -133,6 +175,14 @@ void Tilemap::init(sf::RenderTarget *target)
             else if (map_sketch[y][x] == 'R')
             {
                 output_map[y][x] = TType::rPlatform;
+            }
+            else if (map_sketch[y][x] == 'D')
+            {
+                output_map[y][x] = TType::dirt;
+            }
+            else if (map_sketch[y][x] == 'B')
+            {
+                output_map[y][x] = TType::bricks;
             }
         }
     }
@@ -167,6 +217,16 @@ void Tilemap::fillTilesVector()
             {
                 tiles[(int)TType::rPlatform].setPos(cell_size * x, cell_size * y);
                 activeTiles.push_back(tiles[(int)TType::rPlatform]);
+            }
+            else if (output_map[y][x] == TType::bricks)
+            {
+                tiles[(int)TType::bricks].setPos(cell_size * x, cell_size * y);
+                activeTiles.push_back(tiles[(int)TType::bricks]);
+            }
+            else if (output_map[y][x] == TType::dirt)
+            {
+                tiles[(int)TType::dirt].setPos(cell_size * x, cell_size * y);
+                activeTiles.push_back(tiles[(int)TType::dirt]);
             }
         }
     }

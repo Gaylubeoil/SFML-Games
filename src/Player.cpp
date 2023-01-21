@@ -80,6 +80,7 @@ void Player::updateAnimation()
             IdleTimer.restart();
         }
     }
+
     else if (animState == RIGHT && onPlatform)
     {
         if (RunTimer.getElapsedTime().asSeconds() >= 0.05f)
@@ -186,6 +187,11 @@ void Player::updatePhysics()
         velocity.y = velocityMaxY * ((velocity.y < 0.f) ? -1.f : 1.f);
     velocity.y *= drag;
 
+    if (onPlatform)
+    {
+        velocity.y = 0.f;
+    }
+
     // deceleration
     velocity.x *= drag;
 
@@ -235,6 +241,11 @@ const sf::FloatRect Player::getGlobalBounds() const
     return sprite.getGlobalBounds();
 }
 
+const sf::Vector2f Player::getVelocity() const
+{
+    return velocity;
+}
+
 void Player::setPosition(const float _x, const float _y)
 {
     sprite.setPosition(_x, _y);
@@ -258,6 +269,11 @@ void Player::setFalling(bool _val)
 void Player::resetVelocityY()
 {
     velocity.y = 0.f;
+}
+
+void Player::resetVelocityX()
+{
+    velocity.x = 0.f;
 }
 
 void Player::setOnPlatform(bool _val)
